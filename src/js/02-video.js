@@ -4,21 +4,16 @@ const iframe = document.querySelector('iframe');
 const player = new Vimeo.Player(iframe);
 const LOCALSTORAGE_KEY = 'videoplayer-current-time';
 
-function onGetTimePlayer() {
-  player
-    .getCurrentTime()
-    .then(function (seconds) {
-      localStorage.setItem(LOCALSTORAGE_KEY, seconds);
-    })
-    .catch(function (error) {
-      console.log(error.message);
-    });
-}
-
 player.on('timeupdate', throttle(onGetTimePlayer, 1000));
 
-const currentTime = localStorage.getItem(LOCALSTORAGE_KEY);
+function onGetTimePlayer (e) {
+    localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(e.seconds));
+};
 
-player.setCurrentTime(currentTime).catch(function (error) {
-  console.log(error.message);
-});
+if (localStorage.getItem(LOCALSTORAGE_KEY) !== null) {
+    try {
+        player.setCurrentTime(localStorage.getItem(LOCALSTORAGE_KEY));
+    } catch (err) {
+        console.log("error");
+    };
+};
